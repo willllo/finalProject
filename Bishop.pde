@@ -1,10 +1,10 @@
-public class Pawn extends ChessPiece {
-    public Pawn(int x, int y, boolean what, ChessPiece[][] board) {
+public class Bishop extends ChessPiece {
+    public Bishop(int x, int y, boolean what, ChessPiece[][] board) {
         super(x, y, what, board);
     }
 
     int typeOfPiece() {
-        return 1;
+        return 3;
     }
 
     void drawPiece() {
@@ -13,7 +13,7 @@ public class Pawn extends ChessPiece {
         } else {
             fill(#0000ff);
         }
-        rect(getX(), getY(), 25, 25);
+        rect(getX(), getY(), 50, 25);
     }
 
     void showViable() {
@@ -32,33 +32,7 @@ public class Pawn extends ChessPiece {
         int[][] output = new int[8][8];
         int x = getX() / (600 / 8);
         int y = getY() / (600 / 8);
-        
-        if (getCol()) {
-            if (isValidCapture(x+1, y-1)) {
-                output[x + 1][y - 1] = 1;
-            }
-            if (isValidCapture(x-1, y-1)) {
-                output[x - 1][y - 1] = 1;
-            }
-            if (y - 1 >= 0 && this.getBoard()[y-1][x] == null) {
-                if (y == 6 && board[y-2][x] == null) {
-                  output[x][y-2] = 1;}  
-                  output[x][y-1] = 1;
-            }
-        } else {
-            if (isValidCapture(x+1, y+1)) {
-                output[x + 1][y + 1] = 1;
-            }  
-            if (isValidCapture(x-1, y+1)) {
-                output[x - 1][y + 1] = 1;
-            }
-            if (y + 1 <= 7 && this.getBoard()[y+1][x] == null) {
-                if (y == 1 && board[y+2][x] == null) {
-                  output[x][y+2] = 1;}  
-                  output[x][y+1] = 1;
-            }
-        }
-
+          
         return output;
     }
     boolean isValidCapture(int newRow, int newCol) {

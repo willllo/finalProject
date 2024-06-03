@@ -1,12 +1,14 @@
 public class ChessPiece {
     private int xPos, yPos;
     private boolean col;
-    
-    public ChessPiece(int x, int y, boolean what) {
+    private ChessPiece[][] board;
+    public ChessPiece(int x, int y, boolean what, ChessPiece[][] board1) {
         xPos = x * 600 / 8;
         yPos = y * 600 / 8;
         col = what;
+        board = board1;
     }
+
     
     public ChessPiece() {
         xPos = 0;
@@ -44,5 +46,7 @@ public class ChessPiece {
         int[][] output = new int[1][1];
         return output;
     }
+    ChessPiece[][] getBoard(){
+    return board;}
     void move(int x, int y) {}
 }
