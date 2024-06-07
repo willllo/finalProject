@@ -95,14 +95,27 @@ void setup() {
 }
 
 void draw() {
+  fill (125);
+  rect(600,0, 1000,1000);
+  fill(0);
   if (teamGoing == true) {
   text ("Red's Turn", 650, 75);}
   else {
   text ("Blue's Turn", 650, 75);
   }
   if (isKingInCheck(true)) {
-  text ("RED KING IN CHECK" , 750 ,75);
+  text ("RED KING IN CHECK" , 650 ,150);
   }
+  if (isKingInCheck(false)) {
+  text ("BLUE KING IN CHECK", 650, 250);
+  }
+  if (isCheckMate(true)) {
+  text ("Red lost!", 650, 300);
+  }
+  if (isCheckMate(false)) {
+   text("Blue lost!", 650, 350);
+  }
+  
 }
 void drawBoard() {
     int squareSize = boardSize / 8;
@@ -129,7 +142,9 @@ void mousePressed() {
   int squareSize = boardSize / 8;
   int col = mouseX / squareSize;
   int row = mouseY / squareSize;
-  System.out.println("TeamGOING:" + teamGoing);
+  if (col > 8 || row > 8) {
+    col = 9;
+    row = 9;}
   if (selectedPiece == null && col < 8 && row < 8) {
     if (board[row][col] != null && board[row][col].getCol() == teamGoing) {
       selectedPiece = board[row][col];
@@ -138,7 +153,6 @@ void mousePressed() {
       System.out.println (selectedPiece.typeOfPiece());
       
       if (isKingInCheck(teamGoing)) {
-          text ("King in Check!", 650, 150);
           if (board[row][col].typeOfPiece() != 6) {
           selectedPiece = null;
           selectedRow = 0;
@@ -151,14 +165,20 @@ void mousePressed() {
   }
   else {
     if (selectedPiece.findViable()[col][row] == 1 && board[row][col] != selectedPiece) {
+      
       board[selectedRow][selectedCol] = null;
-      System.out.println ("Row:" + row + "Col:" + col);
+
       board[row][col] = selectedPiece;
       selectedPiece.move(col, row);
       selectedPiece = null;
       selectedRow = -1;
       selectedCol = -1;
       drawBoard();
+      System.out.println ("Is king in checkmate?:" + isCheckMate(!teamGoing));
+      if (isCheckMate(!teamGoing)) {
+        fill (#FFFF00);
+        text("Game is over", 600, 200);
+      }
       teamGoing = !teamGoing;
   //    fill (125);
    //   rect(600, 0, 200, 800);
@@ -171,6 +191,34 @@ void mousePressed() {
     }
   }
 }
+ 
+boolean isCheckMate(boolean team) {
+    int kingRow = 0;
+    int kingCol = 0;
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[i].length; j++) {
+          if (board[i][j] != null){
+            if (board[i][j].typeOfPiece() == 6 && board[i][j].getCol() == team) {
+                kingRow = i;
+                kingCol = j;
+            }
+        }
+    }}
+    boolean kingHasNoMoves = true;
+    for (int k = 0; k < board.length; k++) {
+      for (int l = 0; l < board.length; l++) {
+        if (board[kingRow][kingCol].findViable()[k][l] == 1) {
+          kingHasNoMoves = false;
+        }
+      }
+    }
+    System.out.println ("Is King in check?:" + isKingInCheck(team));
+    System.out.println ("Does king have no moves?:" + kingHasNoMoves);
+    if (isKingInCheck(team) && kingHasNoMoves) {
+    return true;}
+    return false;
+}
+ 
  
 int[][] swapRowCol(int[][] input) {
      int[][] output = new int[input.length][input[0].length];
@@ -193,8 +241,6 @@ boolean isKingInCheck(boolean team) {
             }
         }
     }}
-    System.out.println (team);
-    System.out.println ("Row:" + kingRow + "Col:" + kingCol);
     for (int i = 0; i < board.length; i++) {
         for (int j = 0; j < board[i].length; j++) {
             ChessPiece piece = board[i][j];

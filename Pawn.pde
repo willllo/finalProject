@@ -58,7 +58,7 @@ public class Pawn extends ChessPiece {
                   output[x][y+1] = 1;
             }
         }
-
+        output[x][y] = 0;
         return output;
     }
     boolean isValidCapture(int newRow, int newCol) {

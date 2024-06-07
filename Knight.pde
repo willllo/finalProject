@@ -74,7 +74,7 @@ public class Knight extends ChessPiece {
     if (isValidCapture(x-2,y-1)) {
     output[x-2][y-1] = 1;}
     }
-    
+    output[x][y] = 0;
     return output;
     }
     boolean isValidCapture(int newRow, int newCol) {

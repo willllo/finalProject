@@ -63,6 +63,7 @@ public class Rook extends ChessPiece {
      if (right) {
      output[l][y] = 1;}
    }
+  output[x][y] = 0;
   return output;
   
    }
