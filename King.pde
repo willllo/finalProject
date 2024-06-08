@@ -148,11 +148,8 @@ PImage blackImage = loadImage("blackKing.png");
     return true;
 }
 
-    void move(int xNew, int yNew) {
-      System.out.println (this.findViable()[xNew][yNew]);
-         setX(xNew * 600 /8);
-         setY(yNew * 600 / 8);
-       drawPiece();
-    }
+  String toString() {
+    return getCol()+"King";
+  }
 
 }

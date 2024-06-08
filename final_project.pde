@@ -8,6 +8,11 @@ Pawn test2;
 ChessPiece selectedPiece = null;  
 int selectedRow = -1;
 int selectedCol = -1;
+int[][] attackingCheckViableMoves = new int[8][8];
+int[] attackingCheckCoords = new int[2];
+
+ArrayList<ChessPiece> defendingCheckPieces = new ArrayList<ChessPiece>();
+
 void setup() {
   size(800, 600);
   background(125);
@@ -152,19 +157,29 @@ void mousePressed() {
       selectedCol = col;
       System.out.println (selectedPiece.typeOfPiece());
       
-      if (isKingInCheck(teamGoing)) {
-          if (board[row][col].typeOfPiece() != 6) {
-          selectedPiece = null;
-          selectedRow = 0;
-          selectedCol = 0;}
+      if (isKingInCheck(teamGoing)) { 
+          findDefendingCheckPieces(teamGoing);
+          if (!isDefendingPiece(row, col) && board[row][col].typeOfPiece() != 6) {
+            selectedPiece = null;
+            selectedRow = 0;
+            selectedCol = 0;
+          } else {
+            if (board[row][col].typeOfPiece() == 6) selectedPiece.showViable();
+            else selectedPiece.showCheckViable();
           }
-       if (selectedPiece != null) {
+       }
+       else if (selectedPiece != null) {
       selectedPiece.showViable();     
       
       }}
   }
   else {
-    if (selectedPiece.findViable()[col][row] == 1 && board[row][col] != selectedPiece) {
+    int[][] viableBoard = selectedPiece.findViable();
+    if (isKingInCheck(teamGoing) && selectedPiece.typeOfPiece() != 6) {
+      println("HELLO");
+      viableBoard = selectedPiece.getCheckViableMoves();
+    }
+    if (viableBoard[col][row] == 1 && board[row][col] != selectedPiece) {
       
       board[selectedRow][selectedCol] = null;
 
@@ -212,8 +227,8 @@ boolean isCheckMate(boolean team) {
         }
       }
     }
-    System.out.println ("Is King in check?:" + isKingInCheck(team));
-    System.out.println ("Does king have no moves?:" + kingHasNoMoves);
+    //System.out.println ("Is King in check?:" + isKingInCheck(team));
+    //System.out.println ("Does king have no moves?:" + kingHasNoMoves);
     if (isKingInCheck(team) && kingHasNoMoves) {
     return true;}
     return false;
@@ -247,6 +262,9 @@ boolean isKingInCheck(boolean team) {
             if (piece != null && piece.getCol() != team) {
                 int[][] viableMoves = piece.findViable();
                 if (viableMoves[kingCol][kingRow] == 1) {
+                    attackingCheckViableMoves = piece.findViable();
+                    attackingCheckCoords[0] = piece.getBoardX();
+                    attackingCheckCoords[1] = piece.getBoardY();
                     return true;
                 }
             }
@@ -255,6 +273,58 @@ boolean isKingInCheck(boolean team) {
     return false;
 }
 
+void findDefendingCheckPieces(boolean team) {
+  defendingCheckPieces.clear();
+  for (int i = 0; i < board.length; i++) {
+      for (int j = 0; j < board[i].length; j++) {
+            ChessPiece piece = board[i][j];
+            boolean inDefender = false;
+            if (piece != null && piece.getCol() == team) {
+                int[][] viableMoves = piece.findViable();
+                int tempX = 0;
+                int tempY = 0;
+                for (int y_viable = 0; y_viable < board.length; y_viable++) {
+                  for (int x_viable = 0; x_viable < board[0].length; x_viable++) {
+                     if (viableMoves[y_viable][x_viable] == 1 && attackingCheckViableMoves[y_viable][x_viable] == 1) { //<>//
+                       //print(y_viable + " " + x_viable + piece +  "|");
+                       tempX = piece.getBoardX();
+                       tempY = piece.getBoardY();
+                       piece.simulateMove(y_viable, x_viable);
+                       if (!isKingInCheck(teamGoing)) {
+                         piece.getCheckViableMoves()[y_viable][x_viable] = 1;
+                         defendingCheckPieces.add(piece);
+                         inDefender = true;
+                       }
+                       board[x_viable][y_viable] = null;
+                       piece.simulateMove(tempX, tempY);
+                    }
+                  }
+                }
+                if (piece.findViable()[attackingCheckCoords[0]][attackingCheckCoords[1]] == 1) {
+                  piece.getCheckViableMoves()[attackingCheckCoords[0]][attackingCheckCoords[1]] = 1;
+                  if (!inDefender) defendingCheckPieces.add(piece);  
+
+              }
+            }
+        }
+    }
+}
+
+boolean isDefendingPiece(int row, int col) {
+  for (ChessPiece p: defendingCheckPieces) {
+    if (board[row][col] == p) return true;
+  }
+  return false;
+}
+
+void printBoard() {
+  for (ChessPiece[] i: board) {
+    for (ChessPiece j: i) {
+      print(j + " ");
+    }
+    print("\n");
+  }
+}
 
 //void viableMoves(ChessPiece[][] board, int x, int y) {
  //     board[x][y].

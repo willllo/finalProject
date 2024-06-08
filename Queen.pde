@@ -148,11 +148,8 @@ PImage blackImage = loadImage("blackQueen.png");
     boolean isValidCapture(int newRow, int newCol) {
     return newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8 && board[newCol][newRow] != null && board[newCol][newRow].getCol() != this.getCol();
   }
-    void move(int xNew, int yNew) {
-      System.out.println (this.findViable()[xNew][yNew]);
-         setX(xNew * 600 /8);
-         setY(yNew * 600 / 8);
-       drawPiece();
-    }
-
+    
+  String toString() {
+    return getCol()+"Queen";
+  }
 }
