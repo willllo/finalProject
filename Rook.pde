@@ -4,13 +4,17 @@ public class Rook extends ChessPiece {
   }
   int typeOfPiece() {
     return 2;}
+PImage whiteImage = loadImage("whiteRook.png");
+PImage blackImage = loadImage("blackRook.png");
    void drawPiece() {
    if (getCol()) {
-     fill(#FF0000);}
+     whiteImage.resize(75,75);
+     image(whiteImage,getX(),getY());
+   }
      else {
-     fill(#0000ff);
+       blackImage.resize(75,75);
+     image(blackImage,getX(),getY());
      }
-     rect(getX(), getY(), 25, 50);
    }
   void showViable() {
         int[][] temp = this.findViable();

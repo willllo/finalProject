@@ -3,13 +3,18 @@ public class Knight extends ChessPiece {
       super(x,y,what,board);}
     int typeOfPiece() {
     return 4;}
+PImage blackImage = loadImage("blackKnight.png");
+PImage whiteImage = loadImage("whiteKnight.png");
     void drawPiece() {
       if (getCol()) {
-            fill(#FF0000);
+            whiteImage.resize(75,75);
+            image(whiteImage,getX(),getY());
         } else {
-            fill(#0000ff);
+            blackImage.resize(75,75);
+            image(blackImage,getX(),getY());
+
         }
-        circle(getX() + 600 / 16,getY() + 600/ 16, 25);
+   
     }
     void showViable() {
         int[][] temp = this.findViable();

@@ -1,4 +1,5 @@
 import java.util.Arrays;
+PImage photoWhite;
 ChessPiece[][] board = new ChessPiece[8][8];
 int boardSize = 600;
 color teamOne = color(255,204,0);
@@ -9,17 +10,20 @@ ChessPiece selectedPiece = null;
 int selectedRow = -1;
 int selectedCol = -1;
 void setup() {
+  PImage photoWhite = loadImage("whitePawn.png");
+  photoWhite.resize(500,500);
+  image(photoWhite, 10,10);
   size(800, 600);
   background(125);
   int squareSize = boardSize / 8;
-  
+  image(photoWhite,10,10);
   
   for (int i = 0; i < board.length; i++) {
     for (int j = 0; j < board[0].length; j++) {
       if ((i + j) % 2 == 0) {
-        fill(255);
+        fill(125);
       } else {
-        fill(0);
+        fill(125);
       }
       square(i * squareSize, j * squareSize, squareSize);
       
@@ -99,21 +103,21 @@ void draw() {
   rect(600,0, 1000,1000);
   fill(0);
   if (teamGoing == true) {
-  text ("Red's Turn", 650, 75);}
+  text ("White's Turn", 650, 75);}
   else {
-  text ("Blue's Turn", 650, 75);
+  text ("Black's Turn", 650, 75);
   }
-  if (isKingInCheck(true)) {
-  text ("RED KING IN CHECK" , 650 ,150);
+  if (isKingInCheck(true, board)) {
+  text ("WHITE KING IN CHECK" , 650 ,150);
   }
-  if (isKingInCheck(false)) {
-  text ("BLUE KING IN CHECK", 650, 250);
+  if (isKingInCheck(false, board)) {
+  text ("BLACK KING IN CHECK", 650, 250);
   }
   if (isCheckMate(true)) {
-  text ("Red lost!", 650, 300);
+  text ("White lost!", 650, 300);
   }
   if (isCheckMate(false)) {
-   text("Blue lost!", 650, 350);
+   text("Black lost!", 650, 350);
   }
   
 }
@@ -124,7 +128,7 @@ void drawBoard() {
       if ((i + j) % 2 == 0) {
         fill(255);
       } else {
-        fill(0);
+        fill(100);
       }
       square(i * squareSize, j * squareSize, squareSize);
       
@@ -152,7 +156,7 @@ void mousePressed() {
       selectedCol = col;
       System.out.println (selectedPiece.typeOfPiece());
       
-      if (isKingInCheck(teamGoing)) {
+      if (isKingInCheck(teamGoing, board)) {
           if (board[row][col].typeOfPiece() != 6) {
           selectedPiece = null;
           selectedRow = 0;
@@ -165,9 +169,18 @@ void mousePressed() {
   }
   else {
     if (selectedPiece.findViable()[col][row] == 1 && board[row][col] != selectedPiece) {
+      ChessPiece[][] temp = copyBoard(board);
+      temp[selectedRow][selectedCol] = null;
+      temp[row][col] = selectedPiece;
       
+      if (isKingInCheck(teamGoing, temp)) {
+          fill(0);
+          text("This move will put the king in check", 600, 250);
+      }
       board[selectedRow][selectedCol] = null;
-
+      selectedPiece = null;
+      
+      if (selectedPiece != null) {
       board[row][col] = selectedPiece;
       selectedPiece.move(col, row);
       selectedPiece = null;
@@ -182,7 +195,7 @@ void mousePressed() {
       teamGoing = !teamGoing;
   //    fill (125);
    //   rect(600, 0, 200, 800);
-    }
+    }}
     else {
       selectedPiece = null;
       selectedRow = -1;
@@ -212,14 +225,23 @@ boolean isCheckMate(boolean team) {
         }
       }
     }
-    System.out.println ("Is King in check?:" + isKingInCheck(team));
+    System.out.println ("Is King in check?:" + isKingInCheck(team, board));
     System.out.println ("Does king have no moves?:" + kingHasNoMoves);
-    if (isKingInCheck(team) && kingHasNoMoves) {
+    if (isKingInCheck(team, board) && kingHasNoMoves) {
     return true;}
     return false;
 }
  
- 
+ChessPiece[][] copyBoard(ChessPiece[][] board) {
+  ChessPiece[][] output = new ChessPiece[8][8];
+  for (int i = 0; i < board.length; i++) {
+    for (int j = 0; j < board.length; j++) {
+      output[i][j] = board[i][j];
+    }
+  }
+  return output;
+
+}
 int[][] swapRowCol(int[][] input) {
      int[][] output = new int[input.length][input[0].length];
      for (int i = 0; i < output.length; i++) {
@@ -229,21 +251,21 @@ int[][] swapRowCol(int[][] input) {
      
      return output;
 }
-boolean isKingInCheck(boolean team) {  
+boolean isKingInCheck(boolean team, ChessPiece[][] input) {  
     int kingRow = 0;
     int kingCol = 0;
-    for (int i = 0; i < board.length; i++) {
-        for (int j = 0; j < board[i].length; j++) {
-          if (board[i][j] != null){
-            if (board[i][j].typeOfPiece() == 6 && board[i][j].getCol() == team) {
+    for (int i = 0; i < input.length; i++) {
+        for (int j = 0; j < input[i].length; j++) {
+          if (input[i][j] != null){
+            if (input[i][j].typeOfPiece() == 6 && input[i][j].getCol() == team) {
                 kingRow = i;
                 kingCol = j;
             }
         }
     }}
-    for (int i = 0; i < board.length; i++) {
-        for (int j = 0; j < board[i].length; j++) {
-            ChessPiece piece = board[i][j];
+    for (int i = 0; i < input.length; i++) {
+        for (int j = 0; j < input[i].length; j++) {
+            ChessPiece piece = input[i][j];
             if (piece != null && piece.getCol() != team) {
                 int[][] viableMoves = piece.findViable();
                 if (viableMoves[kingCol][kingRow] == 1) {

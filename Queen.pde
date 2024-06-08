@@ -6,15 +6,18 @@ public class Queen extends ChessPiece {
     int typeOfPiece() {
         return 5;
     }
-
+PImage whiteImage = loadImage("whiteQueen.png");
+PImage blackImage = loadImage("blackQueen.png");
     void drawPiece() {
-        if (getCol()) {
-            fill(#FF0000);
-        } else {
-            fill(#0000ff);
-        }
-        rect(getX(), getY(), 100, 100);
-    }
+   if (getCol()) {
+     whiteImage.resize(75,75);
+     image(whiteImage,getX(),getY());
+   }
+     else {
+       blackImage.resize(75,75);
+     image(blackImage,getX(),getY());
+     }
+   }
 
     void showViable() {
         int[][] temp = this.findViable();

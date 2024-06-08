@@ -6,14 +6,17 @@ public class Bishop extends ChessPiece {
     int typeOfPiece() {
         return 3;
     }
-
+PImage whiteImage = loadImage("whiteBishop.png");
+PImage blackImage = loadImage("blackBishop.png");
     void drawPiece() {
         if (getCol()) {
-            fill(#FF0000);
+            whiteImage.resize(75,75);
+            image(whiteImage,getX(),getY());
+     
         } else {
-            fill(#0000ff);
+            blackImage.resize(75,75);
+            image(blackImage,getX(),getY());
         }
-        rect(getX(), getY(), 50, 25);
     }
 
     void showViable() {

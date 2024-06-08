@@ -6,14 +6,17 @@ public class Pawn extends ChessPiece {
     int typeOfPiece() {
         return 1;
     }
-
+PImage photoWhite = loadImage("whitePawn.png");
+PImage photoBlack = loadImage("blackPawn.png");
     void drawPiece() {
         if (getCol()) {
-            fill(#FF0000);
+            photoWhite.resize(75,75);
+            image(photoWhite,getX(),getY());
+         //   image(photoWhite, getX(),getY());
         } else {
-            fill(#0000ff);
+            photoBlack.resize(75,75);
+            image(photoBlack,getX(),getY());
         }
-        rect(getX(), getY(), 25, 25);
     }
 
     void showViable() {
